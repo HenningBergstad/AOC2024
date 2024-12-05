@@ -2,13 +2,13 @@ def report_counter(filename: str = 'input.txt') -> int:
     safe_reports = 0
     with open(filename) as reports:
         for report in reports.read().splitlines():
-            if safe_check(report):
+            levels = [int(level) for level in report.split()]
+            if safe_check(levels) or dampen_check(levels):
                 safe_reports += 1
     return safe_reports
 
 
-def safe_check(report: str) -> bool:
-    levels = [int(level) for level in report.split()]
+def safe_check(levels: list) -> bool:
     if len(levels) <= 1:
         return True
 
@@ -30,3 +30,12 @@ def safe_check(report: str) -> bool:
             return False
 
     return True
+
+def dampen_check(levels: list) -> bool:
+    for i in range(len(levels)):
+        new_levels = levels[:i] + levels[i + 1:]
+        if safe_check(new_levels):
+            return True
+    return False
+
+print(report_counter())
